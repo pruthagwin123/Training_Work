@@ -1,0 +1,53 @@
+-- 1. Find all employees whose salary is greater than or equal to the average salary of their department. 
+select e.emp_id, e.emp_name, e.dept_id, e.salary from employees e where e.salary >= (select avg(emp.salary) from employees emp where emp.dept_id = e.dept_id);
+
+-- 2. Find the employee(s) who have the highest salary in their department.
+select emp_id, emp_name, dept_id, salary from employees e
+where salary = (select max(salary) from employees where dept_id = e.dept_id);
+
+-- 3. Find the second-highest distinct salary in the company.
+select max(salary) from employees where salary < (select max(salary) from employees);
+
+-- 4. Find all employees who earn the second-highest salary in the company.
+select emp_id, salary from employees where salary in (select max(salary) from employees where salary < (select max(salary) from employees));
+
+-- 5. Find employees whose salary is greater than their manager's salary.select emp_id, emp_name, salary, manager_id
+from employees e where salary > (select salary from employees where emp_id = e.manager_id);
+
+-- 6. Find employees who are managers of at least one employee earning more than them
+select emp_id, emp_name, salary from employees e where exists (select 1 from employees r where r.manager_id = e.emp_id and r.salary > e.salary);
+
+-- 7. Find departments whose average salary is greater than the overall average salary of the company.
+select dept_id from employees group by dept_id having avg(salary) > (select avg(salary) from employees);
+
+-- 8. Find all employees who belong to departments whose average salary is greater than the company's overall average salary.
+select emp_id, emp_name, dept_id, salary from employees
+where dept_id in (select dept_id from employees group by dept_id having avg(salary) > (select avg(salary) from employees));
+
+-- 9. Find employees whose salary is greater than every employee in the HR department. 
+select emp_id, emp_name, salary from employees
+where salary > all (select salary from employees where dept_id = (select dept_id from departments where dept_name = 'HR'));
+
+-- 10. Find employees whose salary is greater than at least one employee in the Research department.
+select emp_id, emp_name, salary from employees
+where salary > any (select salary from employees where dept_id = (select dept_id from departments where dept_name = 'Research'));
+
+-- 11. Find departments that do not have any projects.
+select dept_id, dept_name from departments d
+where not exists (select 1 from projects p where p.dept_id = d.dept_id);
+
+-- 12. Find employees who work in departments that have more than one project.
+select emp_id, emp_name, dept_id from employees
+where dept_id in (select dept_id from projects group by dept_id having count(*) > 1);
+
+-- 13. Find employees who work in departments associated with the project having the highest budget.
+select emp_id, emp_name, dept_id, salary from employees
+where dept_id in (select dept_id from projects where budget = (select max(budget) from projects));
+
+-- 14. Find employees whose salary is closest to the overall average salary of the company. 
+select emp_id, emp_name, salary from employees
+where abs(salary - (select avg(salary) from employees)) = (select min(abs(salary - (select avg(salary) from employees))) from employees);
+
+-- 15. Find departments where the highest-paid employee earns more than every manager in that department. 
+select dept_id from employees e group by dept_id
+having max(salary) > all (select salary from employees m where m.dept_id = e.dept_id and m.emp_id in (select manager_id from employees where manager_id is not null));can you give twith the questiosns
