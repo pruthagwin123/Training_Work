@@ -81,3 +81,51 @@ class Solution {
         return dp[required];
     }
 }
+4. Minimum Cost For Tickets
+class Solution {
+    public int mincostTickets(int[] days, int[] costs) {
+        int lastDay = days[days.length - 1];
+        boolean[] travel = new boolean[lastDay + 1];
+
+        for (int day : days) {
+            travel[day] = true;
+        }
+
+        int[] dp = new int[lastDay + 1];
+
+        for (int day = 1; day <= lastDay; day++) {
+            if (!travel[day]) {
+                dp[day] = dp[day - 1];
+            } else {
+                int oneDay = dp[day - 1] + costs[0];
+                int sevenDay = dp[Math.max(0, day - 7)] + costs[1];
+                int thirtyDay = dp[Math.max(0, day - 30)] + costs[2];
+
+                dp[day] = Math.min(oneDay, Math.min(sevenDay, thirtyDay));
+            }
+        }
+
+        return dp[lastDay];
+    }
+}
+5. Last Stone Weight II
+class Solution {
+    public int lastStoneWeightII(int[] stones) {
+        int sum = 0;
+
+        for (int stone : stones) {
+            sum += stone;
+        }
+
+        int target = sum / 2;
+        int[] dp = new int[target + 1];
+
+        for (int stone : stones) {
+            for (int j = target; j >= stone; j--) {
+                dp[j] = Math.max(dp[j], dp[j - stone] + stone);
+            }
+        }
+
+        return sum - 2 * dp[target];
+    }
+}
