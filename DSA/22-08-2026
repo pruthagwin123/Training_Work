@@ -1,1 +1,83 @@
 
+1. Delete and Earn
+class Solution {
+    public int deleteAndEarn(int[] nums) {
+        int max = 0;
+
+        for (int num : nums) {
+            max = Math.max(max, num);
+        }
+
+        int[] sum = new int[max + 1];
+
+        for (int num : nums) {
+            sum[num] += num;
+        }
+
+        int prev2 = 0;
+        int prev1 = 0;
+
+        for (int i = 1; i <= max; i++) {
+            int curr = Math.max(prev1, prev2 + sum[i]);
+            prev2 = prev1;
+            prev1 = curr;
+        }
+
+        return prev1;
+    }
+}
+
+
+2. Partition Equal Subset Sum
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum = 0;
+
+        for (int num : nums) {
+            sum += num;
+        }
+
+        if (sum % 2 != 0) {
+            return false;
+        }
+
+        int target = sum / 2;
+        boolean[] dp = new boolean[target + 1];
+        dp[0] = true;
+
+        for (int num : nums) {
+            for (int j = target; j >= num; j--) {
+                dp[j] = dp[j] || dp[j - num];
+            }
+        }
+
+        return dp[target];
+    }
+}
+
+3. Target Sum
+class Solution {
+    public int findTargetSumWays(int[] nums, int target) {
+        int sum = 0;
+
+        for (int num : nums) {
+            sum += num;
+        }
+
+        if (Math.abs(target) > sum || (sum + target) % 2 != 0) {
+            return 0;
+        }
+
+        int required = (sum + target) / 2;
+        int[] dp = new int[required + 1];
+        dp[0] = 1;
+
+        for (int num : nums) {
+            for (int j = required; j >= num; j--) {
+                dp[j] += dp[j - num];
+            }
+        }
+
+        return dp[required];
+    }
+}
